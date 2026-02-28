@@ -1,14 +1,12 @@
 import React from 'react';
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-} from 'react-simple-maps';
-import { geoCentroid, geoAlbersUsa } from 'd3-geo';
+import { geoCentroid, geoAlbersUsa, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
 
-// note: the built-in projection string ensures the library will render properly without
-// trying to pass an object which sometimes fails silently.
+// load local topojson data (saved under src/data)
+import topoData from '../data/states-10m.json';
+
+// convert once to geojson features
+const topoFeatures = feature(topoData as any, (topoData as any).objects.states);
 
 export interface USMapProps {
   /**
@@ -19,66 +17,26 @@ export interface USMapProps {
   flight?: { start: [number, number]; end: [number, number] };
 }
 
-const geoUrl = 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json';
-
-// simple fallback polygon covering contiguous U.S. if the CDN can't be reached
-const fallbackGeo: any = {
-  type: 'FeatureCollection',
-  features: [
-    {
-      type: 'Feature',
-      properties: { name: 'USA (approx)' },
-      geometry: {
-        type: 'Polygon',
-        coordinates: [[
-          [-125, 24],
-          [-66, 24],
-          [-66, 49],
-          [-125, 49],
-          [-125, 24],
-        ]],
-      },
-    },
-  ],
-};
 
 const USMap: React.FC<USMapProps> = ({ onLocationClick, flight }) => {
-  const [geoData, setGeoData] = React.useState<any>(null);
+  // no async loading; use precomputed features
+  const geoData = topoFeatures as any;
 
-  // attempt to fetch the official topology; if it fails we'll just render the fallback
-  React.useEffect(() => {
-    fetch(geoUrl)
-      .then((r) => r.json())
-      .then((json) => {
-        try {
-          // us-atlas stores topology under objects.states
-          const geo = feature(json as any, (json as any).objects.states);
-          setGeoData(geo);
-        } catch (e) {
-          console.warn('failed to convert topojson, using raw data', e);
-          setGeoData(json);
-        }
-      })
-      .catch((err) => {
-        console.warn('could not load geojson, using fallback', err);
-      });
-  }, []);
-
-  const handleGeoClick = (
-    geo: any,
+  const handleFeatureClick = (
+    feature: any,
     evt: React.MouseEvent<SVGPathElement, MouseEvent>,
   ) => {
-    const centroid = geoCentroid(geo);
+    const centroid = geoCentroid(feature);
     onLocationClick(centroid as [number, number]);
   };
 
-  // to compute the pixel locations for flight endpoints we create a separate
-  // projection with the same configuration that the ComposableMap uses.
+  // projection used for drawing the map and computing path coordinates.
   const width = 800;
   const height = 500;
   const projection = geoAlbersUsa()
     .scale(1000)
     .translate([width / 2, height / 2]);
+  const pathGenerator = geoPath().projection(projection);
 
   let pathElements: JSX.Element | null = null;
   if (flight) {
@@ -102,33 +60,23 @@ const USMap: React.FC<USMapProps> = ({ onLocationClick, flight }) => {
 
   return (
     <div className="w-full h-full bg-white">
-      <ComposableMap
-        projection="geoAlbersUsa"
-        projectionConfig={{ scale: 1000 }}
-        width={width}
-        height={height}
-        className="mx-auto"
-      >
-        <Geographies geography={geoData || fallbackGeo}>
-          {({ geographies }) => {
-            if (!geographies || geographies.length === 0) {
-              return <text>loading map...</text>;
-            }
-            return geographies.map((geo) => (
-              <Geography
-                key={geo.rsmKey}
-                geography={geo}
-                fill="#ffffff"
-                stroke="#000000"
-                strokeWidth={0.7}
-                onClick={(evt) => handleGeoClick(geo, evt)}
-                className="hover:fill-blue-300 cursor-pointer"
-              />
-            ));
-          }}
-        </Geographies>
+      <svg width={width} height={height} className="mx-auto">
+        {geoData.features.map((feat: any) => {
+          const path = pathGenerator(feat) || '';
+          return (
+            <path
+              key={feat.id || feat.properties.name}
+              d={path}
+              fill="#ffffff"
+              stroke="#000000"
+              strokeWidth={0.7}
+              className="hover:fill-blue-300 cursor-pointer"
+              onClick={(evt) => handleFeatureClick(feat, evt)}
+            />
+          );
+        })}
         {pathElements}
-      </ComposableMap>
+      </svg>
     </div>
   );
 };
