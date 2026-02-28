@@ -1,0 +1,82 @@
+Airfare Markets Under Pressure
+Students in Data Science and Statistics
+Introduction
+Domestic air travel plays a vital role in economic connectivity, enabling business activity,
+tourism, and personal travel across the United States. For consumers, airfare is one of the most
+visible and variable costs of travel, shaped by factors such as distance, demand, airline
+competition, and market concentration. Persistent fare differences across routes and cities raise
+important questions about consumer welfare, pricing power, and market structure.
+The U.S. Department of Transportation’s Domestic Airline Consumer Airfare Report provides
+detailed, market-level data on fares, passenger volumes, and competitive dynamics across
+domestic routes. Unlike anecdotal travel advice (e.g., “book on Tuesdays”), this data captures
+systematic, structural drivers of airfare differences, offering an opportunity to rigorously analyze
+how route characteristics and city-level market power relate to observed prices.
+Challenge
+To better understand the factors driving ticket affordability across domestic U.S. air travel, use
+evidence-based insights that focus on market fundamentals such as competition, hub
+dominance, route demand, and distance.
+Using the provided dataset—constructed from U.S. Department of Transportation airfare
+reports from 2021 to 2025 (Q2)—analyze when, where, and why airfares differ across markets,
+and how city-level characteristics influence route-level prices. The ultimate goal is to translate
+these findings into actionable insights that can inform travelers, industry stakeholders, and
+policymakers.
+Participants are encouraged to explore the dataset creatively. Possible analytical directions
+include, but are not limited to:
+1. Market structure and pricing: How do fares differ between routes that touch highly
+dominant hub cities versus more competitive markets? Do routes with greater low-cost
+carrier (LCC) penetration exhibit systematically lower fares?
+2. Temporal and spatial patterns: How do average fares evolve across quarters and years?
+Are fare changes uniform across markets, or concentrated in specific city-pairs or hubs?
+3. Competition and affordability: How do dominant-carrier market share and lowest-fare
+carrier presence relate to average market fares? Are students and budget-constrained
+travelers more exposed to higher fares in certain city markets?
+4. Modeling and prediction: Can route-level fares be predicted using distance, demand,
+competition, and endpoint hub characteristics? Which features contribute most to
+explaining fare variation across markets?
+Usage
+The results of this project have implications for a wide range of stakeholders. Consumers
+benefit from clearer, evidence-based guidance on which routes and city markets tend to be more
+or less affordable, enabling more informed travel decisions. Travel platforms and agencies can
+leverage these insights to enhance pricing transparency tools, route comparisons, and
+affordability indicators that improve user trust and decision-making. Airlines may use the
+findings to evaluate their competitive positioning across markets and better understand how
+hub dominance and low-cost carrier presence influence pricing strategies. Finally, policymakers
+and consumer advocacy groups gain a data-driven perspective on airfare equity and
+competition, supporting more informed discussions around accessibility, consumer protection,
+and the fairness of domestic air travel markets.
+Deliverables
+● Code Submission: All scripts or notebooks. Must be well-organized, executable, and
+reproducible. Include a README.md file and a fully executed Jupyter Notebook (.ipynb)
+or RMarkdown file (.rmd)
+● Presentation Slides (maximum 15 slides): Focus on problem framing, data insights,
+model approach, key results, and impact.
+● Video Presentation (maximum 6 minutes): A narrated walkthrough of presentation
+slides and/or an optional demo or dashboard. Judges will view this first. Should simulate
+a live presentation and. All team members are encouraged (but not required) to
+participate. Must include:
+○ Problem overview
+○ Data approach
+○ Model explanation
+○ Key results
+○ Final insights
+Submissions may include other materials that support reproducibility.
+Award Categories
+● Best Overall Project
+● Best Visualizations: Awarded to the team that produces the most insightful and visually
+compelling representations of airfare dynamics, making complex relationships, like hub
+dominance or competition effects, easy to understand.
+● Best Insights: Recognizes teams that uncover the most actionable and meaningful
+insights, especially those that challenge common myths or highlight structural
+affordability barriers for students and families. Strong entries will move beyond surface
+trends to explain why prices behave the way they do, whether due to airline strategy,
+route competition, demand surges, or booking behavior. Findings that challenge
+common myths or illuminate affordability barriers for students and families are
+especially encouraged. The emphasis is on the clarity, originality, and real-world
+usefulness of the insights, not just their statistical significance.
+● Best Model: This prize goes to the team that develops the most accurate, reliable, and
+innovative model for understanding or predicting airfare dynamics. Examples include
+models that forecast ticket prices, identify the optimal booking window, or simulate
+airline pricing strategies under different market conditions. Evaluation will focus on
+technical rigor, creativity in feature engineering, and interpretability of results. Bonus
+recognition will go to teams that translate their models into user-friendly tools or
+recommendations that could help travelers make smarter, data-driven booking decisions.

@@ -1,0 +1,682 @@
+[
+  {
+    "city": "Albany, NY",
+    "lat": 42.6526,
+    "lon": -73.7562
+  },
+  {
+    "city": "Albuquerque, NM",
+    "lat": 35.0844,
+    "lon": -106.6504
+  },
+  {
+    "city": "Allentown/Bethlehem/Easton, PA",
+    "lat": 40.6023,
+    "lon": -75.4714
+  },
+  {
+    "city": "Amarillo, TX",
+    "lat": 35.222,
+    "lon": -101.8313
+  },
+  {
+    "city": "Appleton, WI",
+    "lat": 44.2619,
+    "lon": -88.4154
+  },
+  {
+    "city": "Asheville, NC",
+    "lat": 35.5951,
+    "lon": -82.5515
+  },
+  {
+    "city": "Aspen, CO",
+    "lat": 39.1911,
+    "lon": -106.8175
+  },
+  {
+    "city": "Atlanta, GA (Metropolitan Area)",
+    "lat": 33.749,
+    "lon": -84.388
+  },
+  {
+    "city": "Atlantic City, NJ",
+    "lat": 39.3643,
+    "lon": -74.4229
+  },
+  {
+    "city": "Austin, TX",
+    "lat": 30.2672,
+    "lon": -97.7431
+  },
+  {
+    "city": "Bangor, ME",
+    "lat": 44.8016,
+    "lon": -68.7712
+  },
+  {
+    "city": "Belleville, IL",
+    "lat": 38.5201,
+    "lon": -89.984
+  },
+  {
+    "city": "Bellingham, WA",
+    "lat": 48.7519,
+    "lon": -122.4787
+  },
+  {
+    "city": "Bend/Redmond, OR",
+    "lat": 44.0582,
+    "lon": -121.3153
+  },
+  {
+    "city": "Billings, MT",
+    "lat": 45.7833,
+    "lon": -108.5007
+  },
+  {
+    "city": "Birmingham, AL",
+    "lat": 33.5186,
+    "lon": -86.8104
+  },
+  {
+    "city": "Bismarck/Mandan, ND",
+    "lat": 46.8083,
+    "lon": -100.7837
+  },
+  {
+    "city": "Boise, ID",
+    "lat": 43.615,
+    "lon": -116.2023
+  },
+  {
+    "city": "Boston, MA (Metropolitan Area)",
+    "lat": 42.3601,
+    "lon": -71.0589
+  },
+  {
+    "city": "Bozeman, MT",
+    "lat": 45.677,
+    "lon": -111.0429
+  },
+  {
+    "city": "Buffalo, NY",
+    "lat": 42.8864,
+    "lon": -78.8784
+  },
+  {
+    "city": "Burlington, VT",
+    "lat": 44.4759,
+    "lon": -73.2121
+  },
+  {
+    "city": "Cedar Rapids/Iowa City, IA",
+    "lat": 41.9779,
+    "lon": -91.6656
+  },
+  {
+    "city": "Charleston, SC",
+    "lat": 32.7765,
+    "lon": -79.9311
+  },
+  {
+    "city": "Charlotte, NC",
+    "lat": 35.2271,
+    "lon": -80.8431
+  },
+  {
+    "city": "Charlottesville, VA",
+    "lat": 38.0293,
+    "lon": -78.4767
+  },
+  {
+    "city": "Chicago, IL",
+    "lat": 41.8781,
+    "lon": -87.6298
+  },
+  {
+    "city": "Cincinnati, OH",
+    "lat": 39.1031,
+    "lon": -84.512
+  },
+  {
+    "city": "Cleveland, OH (Metropolitan Area)",
+    "lat": 41.4993,
+    "lon": -81.6944
+  },
+  {
+    "city": "Colorado Springs, CO",
+    "lat": 38.8339,
+    "lon": -104.8214
+  },
+  {
+    "city": "Columbia, SC",
+    "lat": 34.0007,
+    "lon": -81.0348
+  },
+  {
+    "city": "Columbus, OH",
+    "lat": 39.9612,
+    "lon": -82.9988
+  },
+  {
+    "city": "Dallas/Fort Worth, TX",
+    "lat": 32.8968,
+    "lon": -97.038
+  },
+  {
+    "city": "Dayton, OH",
+    "lat": 39.7589,
+    "lon": -84.1916
+  },
+  {
+    "city": "Denver, CO",
+    "lat": 39.7392,
+    "lon": -104.9903
+  },
+  {
+    "city": "Des Moines, IA",
+    "lat": 41.5868,
+    "lon": -93.625
+  },
+  {
+    "city": "Detroit, MI",
+    "lat": 42.3314,
+    "lon": -83.0458
+  },
+  {
+    "city": "Eagle, CO",
+    "lat": 39.6553,
+    "lon": -106.8287
+  },
+  {
+    "city": "El Paso, TX",
+    "lat": 31.7619,
+    "lon": -106.485
+  },
+  {
+    "city": "Eugene, OR",
+    "lat": 44.0521,
+    "lon": -123.0868
+  },
+  {
+    "city": "Eureka/Arcata, CA",
+    "lat": 40.8021,
+    "lon": -124.1637
+  },
+  {
+    "city": "Everett, WA",
+    "lat": 47.979,
+    "lon": -122.2021
+  },
+  {
+    "city": "Fargo, ND",
+    "lat": 46.8772,
+    "lon": -96.7898
+  },
+  {
+    "city": "Fayetteville, AR",
+    "lat": 36.0822,
+    "lon": -94.1719
+  },
+  {
+    "city": "Flint, MI",
+    "lat": 43.0125,
+    "lon": -83.6875
+  },
+  {
+    "city": "Fort Myers, FL",
+    "lat": 26.6406,
+    "lon": -81.8723
+  },
+  {
+    "city": "Fort Wayne, IN",
+    "lat": 41.0793,
+    "lon": -85.1394
+  },
+  {
+    "city": "Fresno, CA",
+    "lat": 36.7378,
+    "lon": -119.7871
+  },
+  {
+    "city": "Grand Rapids, MI",
+    "lat": 42.9634,
+    "lon": -85.6681
+  },
+  {
+    "city": "Greensboro/High Point, NC",
+    "lat": 36.0726,
+    "lon": -79.792
+  },
+  {
+    "city": "Greenville/Spartanburg, SC",
+    "lat": 34.8526,
+    "lon": -82.394
+  },
+  {
+    "city": "Harlingen/San Benito, TX",
+    "lat": 26.1906,
+    "lon": -97.6961
+  },
+  {
+    "city": "Harrisburg, PA",
+    "lat": 40.2732,
+    "lon": -76.8867
+  },
+  {
+    "city": "Hartford, CT",
+    "lat": 41.7658,
+    "lon": -72.6734
+  },
+  {
+    "city": "Houston, TX",
+    "lat": 29.7604,
+    "lon": -95.3698
+  },
+  {
+    "city": "Huntsville, AL",
+    "lat": 34.7304,
+    "lon": -86.5861
+  },
+  {
+    "city": "Indianapolis, IN",
+    "lat": 39.7684,
+    "lon": -86.1581
+  },
+  {
+    "city": "Jackson, WY",
+    "lat": 43.4799,
+    "lon": -110.7624
+  },
+  {
+    "city": "Jackson/Vicksburg, MS",
+    "lat": 32.2988,
+    "lon": -90.1848
+  },
+  {
+    "city": "Jacksonville, FL",
+    "lat": 30.3322,
+    "lon": -81.6557
+  },
+  {
+    "city": "Kalispell, MT",
+    "lat": 48.192,
+    "lon": -114.3168
+  },
+  {
+    "city": "Kansas City, MO",
+    "lat": 39.0997,
+    "lon": -94.5786
+  },
+  {
+    "city": "Key West, FL",
+    "lat": 24.5551,
+    "lon": -81.78
+  },
+  {
+    "city": "Knoxville, TN",
+    "lat": 35.9606,
+    "lon": -83.9207
+  },
+  {
+    "city": "Las Vegas, NV",
+    "lat": 36.1699,
+    "lon": -115.1398
+  },
+  {
+    "city": "Latrobe, PA",
+    "lat": 40.3212,
+    "lon": -79.3795
+  },
+  {
+    "city": "Little Rock, AR",
+    "lat": 34.7465,
+    "lon": -92.2896
+  },
+  {
+    "city": "Los Angeles, CA (Metropolitan Area)",
+    "lat": 33.9425,
+    "lon": -118.4081
+  },
+  {
+    "city": "Louisville, KY",
+    "lat": 38.2527,
+    "lon": -85.7585
+  },
+  {
+    "city": "Lubbock, TX",
+    "lat": 33.5779,
+    "lon": -101.8552
+  },
+  {
+    "city": "Madison, WI",
+    "lat": 43.0731,
+    "lon": -89.4012
+  },
+  {
+    "city": "Martha's Vineyard, MA",
+    "lat": 41.3805,
+    "lon": -70.6455
+  },
+  {
+    "city": "Medford, OR",
+    "lat": 42.3265,
+    "lon": -122.8756
+  },
+  {
+    "city": "Memphis, TN",
+    "lat": 35.1495,
+    "lon": -90.049
+  },
+  {
+    "city": "Miami, FL (Metropolitan Area)",
+    "lat": 25.7617,
+    "lon": -80.1918
+  },
+  {
+    "city": "Midland/Odessa, TX",
+    "lat": 31.9973,
+    "lon": -102.0779
+  },
+  {
+    "city": "Milwaukee, WI",
+    "lat": 43.0389,
+    "lon": -87.9065
+  },
+  {
+    "city": "Minneapolis/St. Paul, MN",
+    "lat": 44.9778,
+    "lon": -93.265
+  },
+  {
+    "city": "Mission/McAllen/Edinburg, TX",
+    "lat": 26.2034,
+    "lon": -98.23
+  },
+  {
+    "city": "Missoula, MT",
+    "lat": 46.8721,
+    "lon": -114.0
+  },
+  {
+    "city": "Myrtle Beach, SC",
+    "lat": 33.6891,
+    "lon": -78.8867
+  },
+  {
+    "city": "Nantucket, MA",
+    "lat": 41.2835,
+    "lon": -70.0995
+  },
+  {
+    "city": "Nashville, TN",
+    "lat": 36.1627,
+    "lon": -86.7816
+  },
+  {
+    "city": "New Haven, CT",
+    "lat": 41.3083,
+    "lon": -72.9279
+  },
+  {
+    "city": "New Orleans, LA",
+    "lat": 29.9511,
+    "lon": -90.0715
+  },
+  {
+    "city": "New York City, NY (Metropolitan Area)",
+    "lat": 40.7128,
+    "lon": -74.006
+  },
+  {
+    "city": "Norfolk, VA (Metropolitan Area)",
+    "lat": 36.8508,
+    "lon": -76.2859
+  },
+  {
+    "city": "Oklahoma City, OK",
+    "lat": 35.4676,
+    "lon": -97.5164
+  },
+  {
+    "city": "Omaha, NE",
+    "lat": 41.2565,
+    "lon": -95.9345
+  },
+  {
+    "city": "Orlando, FL",
+    "lat": 28.5383,
+    "lon": -81.3792
+  },
+  {
+    "city": "Palm Springs, CA",
+    "lat": 33.8303,
+    "lon": -116.5453
+  },
+  {
+    "city": "Panama City, FL",
+    "lat": 30.1588,
+    "lon": -85.6602
+  },
+  {
+    "city": "Pasco/Kennewick/Richland, WA",
+    "lat": 46.2396,
+    "lon": -119.1006
+  },
+  {
+    "city": "Pensacola, FL",
+    "lat": 30.4213,
+    "lon": -87.2169
+  },
+  {
+    "city": "Peoria, IL",
+    "lat": 40.6936,
+    "lon": -89.589
+  },
+  {
+    "city": "Philadelphia, PA",
+    "lat": 39.9526,
+    "lon": -75.1652
+  },
+  {
+    "city": "Phoenix, AZ",
+    "lat": 33.4484,
+    "lon": -112.074
+  },
+  {
+    "city": "Pittsburgh, PA",
+    "lat": 40.4406,
+    "lon": -79.9959
+  },
+  {
+    "city": "Portland, ME",
+    "lat": 43.6591,
+    "lon": -70.2568
+  },
+  {
+    "city": "Portland, OR",
+    "lat": 45.5152,
+    "lon": -122.6784
+  },
+  {
+    "city": "Provo, UT",
+    "lat": 40.2338,
+    "lon": -111.6585
+  },
+  {
+    "city": "Punta Gorda, FL",
+    "lat": 26.9298,
+    "lon": -82.0454
+  },
+  {
+    "city": "Raleigh/Durham, NC",
+    "lat": 35.7796,
+    "lon": -78.6382
+  },
+  {
+    "city": "Reno, NV",
+    "lat": 39.5296,
+    "lon": -119.8138
+  },
+  {
+    "city": "Richmond, VA",
+    "lat": 37.5407,
+    "lon": -77.436
+  },
+  {
+    "city": "Rochester, NY",
+    "lat": 43.1566,
+    "lon": -77.6088
+  },
+  {
+    "city": "Rockford, IL",
+    "lat": 42.2711,
+    "lon": -89.094
+  },
+  {
+    "city": "Sacramento, CA",
+    "lat": 38.5816,
+    "lon": -121.4944
+  },
+  {
+    "city": "Salt Lake City, UT",
+    "lat": 40.7608,
+    "lon": -111.891
+  },
+  {
+    "city": "San Antonio, TX",
+    "lat": 29.4241,
+    "lon": -98.4936
+  },
+  {
+    "city": "San Diego, CA",
+    "lat": 32.7157,
+    "lon": -117.1611
+  },
+  {
+    "city": "San Francisco, CA (Metropolitan Area)",
+    "lat": 37.7749,
+    "lon": -122.4194
+  },
+  {
+    "city": "Sanford, FL",
+    "lat": 28.8003,
+    "lon": -81.2731
+  },
+  {
+    "city": "Santa Barbara, CA",
+    "lat": 34.4208,
+    "lon": -119.6982
+  },
+  {
+    "city": "Santa Rosa, CA",
+    "lat": 38.4405,
+    "lon": -122.7141
+  },
+  {
+    "city": "Sarasota/Bradenton, FL",
+    "lat": 27.3364,
+    "lon": -82.5307
+  },
+  {
+    "city": "Savannah, GA",
+    "lat": 32.0809,
+    "lon": -81.0912
+  },
+  {
+    "city": "Seattle, WA",
+    "lat": 47.6062,
+    "lon": -122.3321
+  },
+  {
+    "city": "Sioux Falls, SD",
+    "lat": 43.546,
+    "lon": -96.7313
+  },
+  {
+    "city": "South Bend, IN",
+    "lat": 41.6764,
+    "lon": -86.252
+  },
+  {
+    "city": "Spokane, WA",
+    "lat": 47.6588,
+    "lon": -117.426
+  },
+  {
+    "city": "St. Louis, MO",
+    "lat": 38.627,
+    "lon": -90.1994
+  },
+  {
+    "city": "Steamboat Springs, CO",
+    "lat": 40.485,
+    "lon": -106.8317
+  },
+  {
+    "city": "Syracuse, NY",
+    "lat": 43.0481,
+    "lon": -76.1474
+  },
+  {
+    "city": "Tallahassee, FL",
+    "lat": 30.4383,
+    "lon": -84.2807
+  },
+  {
+    "city": "Tampa, FL (Metropolitan Area)",
+    "lat": 27.9506,
+    "lon": -82.4572
+  },
+  {
+    "city": "Trenton, NJ",
+    "lat": 40.2171,
+    "lon": -74.7429
+  },
+  {
+    "city": "Tucson, AZ",
+    "lat": 32.2226,
+    "lon": -110.9747
+  },
+  {
+    "city": "Tulsa, OK",
+    "lat": 36.154,
+    "lon": -95.9928
+  },
+  {
+    "city": "Valparaiso, FL",
+    "lat": 30.508,
+    "lon": -86.5025
+  },
+  {
+    "city": "Vero Beach, FL",
+    "lat": 27.6386,
+    "lon": -80.3973
+  },
+  {
+    "city": "Washington, DC (Metropolitan Area)",
+    "lat": 38.9072,
+    "lon": -77.0369
+  },
+  {
+    "city": "West Palm Beach/Palm Beach, FL",
+    "lat": 26.7153,
+    "lon": -80.0534
+  },
+  {
+    "city": "Wichita, KS",
+    "lat": 37.6872,
+    "lon": -97.3301
+  },
+  {
+    "city": "Wilmington, NC",
+    "lat": 34.2257,
+    "lon": -77.9447
+  },
+  {
+    "city": "Worcester, MA",
+    "lat": 42.2626,
+    "lon": -71.8023
+  }
+]
