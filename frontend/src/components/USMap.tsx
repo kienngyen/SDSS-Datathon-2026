@@ -1,12 +1,26 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { geoAlbersUsa, geoPath } from 'd3-geo';
 import { feature, mesh } from 'topojson-client';
 import { presimplify, simplify } from 'topojson-simplify';
 
 import topoData from '../data/states-10m.json';
 import airportData from '../data/airport-coords.json';
+import routesData from '../data/routes.json';
 
-const EXCLUDED_FIPS = new Set(['02']); // Alaska
+interface RouteRecord {
+  city1: string;
+  city2: string;
+  lat1: number;
+  lon1: number;
+  lat2: number;
+  lon2: number;
+  year: number;
+  quarter: number;
+  fare: number;
+  passengers: number;
+}
+
+const EXCLUDED_FIPS = new Set(['02']);
 
 const simplified = simplify(presimplify(topoData as any), 0.08);
 
@@ -26,12 +40,13 @@ const filteredTopo = {
 const topoFeatures = feature(filteredTopo as any, filteredTopo.objects.states);
 const outerBoundary = mesh(filteredTopo as any, filteredTopo.objects.states, (a, b) => a === b);
 
-export interface USMapProps {
-  onLocationClick: (coords: [number, number]) => void;
-  flight?: { start: [number, number]; end: [number, number] };
+interface USMapProps {
+  selectedYears: Set<number>;
+  selectedQuarters: Map<number, Set<number>>;
 }
 
-const USMap: React.FC<USMapProps> = ({ flight }) => {
+const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters }) => {
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const geoData = topoFeatures as any;
 
   const width = 960;
@@ -53,27 +68,66 @@ const USMap: React.FC<USMapProps> = ({ flight }) => {
       .filter(Boolean) as { city: string; x: number; y: number }[];
   }, [projection]);
 
-  let flightOverlay: JSX.Element | null = null;
-  if (flight) {
-    const s = projection(flight.start) || [0, 0];
-    const e = projection(flight.end) || [0, 0];
-    const midX = (s[0] + e[0]) / 2;
-    const midY = Math.min(s[1], e[1]) - 60;
-    flightOverlay = (
-      <g>
-        <path
-          d={`M${s[0]},${s[1]} Q${midX},${midY} ${e[0]},${e[1]}`}
-          fill="none"
-          stroke="#60a5fa"
-          strokeWidth={2}
-          strokeDasharray="6 3"
-          opacity={0.9}
-        />
-        <circle cx={s[0]} cy={s[1]} r={5} fill="#3b82f6" stroke="#0f172a" strokeWidth={1.5} />
-        <circle cx={e[0]} cy={e[1]} r={5} fill="#3b82f6" stroke="#0f172a" strokeWidth={1.5} />
-      </g>
-    );
-  }
+  const filteredRoutes = useMemo(() => {
+    let data = routesData as RouteRecord[];
+    const hasSelection = selectedYears.size > 0;
+
+    if (hasSelection) {
+      data = data.filter((r) => {
+        if (!selectedYears.has(r.year)) return false;
+        const qs = selectedQuarters.get(r.year);
+        if (qs && qs.size > 0) return qs.has(r.quarter);
+        return true;
+      });
+    }
+
+    const grouped = new Map<string, { city1: string; city2: string; passengers: number }>();
+    for (const r of data) {
+      const key = `${r.city1}-${r.city2}`;
+      const existing = grouped.get(key);
+      if (existing) {
+        existing.passengers += r.passengers;
+      } else {
+        grouped.set(key, { city1: r.city1, city2: r.city2, passengers: r.passengers });
+      }
+    }
+    return Array.from(grouped.values());
+  }, [selectedYears, selectedQuarters]);
+
+  const flightArcs = useMemo(() => {
+    const cityPos = new Map<string, [number, number]>();
+    for (const ap of airportData) {
+      const p = projection([ap.lon, ap.lat]);
+      if (p) cityPos.set(ap.city, [p[0], p[1]]);
+    }
+
+    return filteredRoutes
+      .map((r) => {
+        const s = cityPos.get(r.city1);
+        const e = cityPos.get(r.city2);
+        if (!s || !e) return null;
+
+        const dx = e[0] - s[0];
+        const dy = e[1] - s[1];
+
+        const midX = (s[0] + e[0]) / 2 - dy * 0.15;
+        const midY = (s[1] + e[1]) / 2 + dx * 0.15;
+
+        return {
+          key: `${r.city1}-${r.city2}`,
+          city1: r.city1,
+          city2: r.city2,
+          d: `M${s[0]},${s[1]} Q${midX},${midY} ${e[0]},${e[1]}`,
+          passengers: r.passengers,
+        };
+      })
+      .filter(Boolean) as { key: string; city1: string; city2: string; d: string; passengers: number }[];
+  }, [projection, filteredRoutes]);
+
+  const maxPax = useMemo(
+    () => Math.max(...flightArcs.map((a) => a.passengers)),
+    [flightArcs],
+  );
 
   return (
     <svg
@@ -104,17 +158,49 @@ const USMap: React.FC<USMapProps> = ({ flight }) => {
         strokeLinecap="round"
         pointerEvents="none"
       />
-      {airportDots.map((dot) => (
-        <circle
-          key={dot.city}
-          cx={dot.x}
-          cy={dot.y}
-          r={2.5}
-          fill="#ef4444"
-          opacity={0.85}
-        />
-      ))}
-      {flightOverlay}
+      <g>
+        {flightArcs.map((arc) => {
+          const connected = !selectedCity || arc.city1 === selectedCity || arc.city2 === selectedCity;
+          if (!connected) return null;
+          const t = arc.passengers / maxPax;
+          const intensity = Math.pow(t, 0.35);
+          return (
+            <path
+              key={arc.key}
+              d={arc.d}
+              fill="none"
+              stroke={selectedCity ? '#60a5fa' : '#3b82f6'}
+              strokeWidth={selectedCity ? 0.5 + intensity * 3.5 : 0.2 + intensity * 4}
+              opacity={selectedCity ? 0.15 + intensity * 0.7 : 0.02 + intensity * 0.45}
+              strokeLinecap="round"
+              pointerEvents="none"
+            />
+          );
+        })}
+      </g>
+      {airportDots.map((dot) => {
+        const isSelected = selectedCity === dot.city;
+        const isConnected = selectedCity
+          ? flightArcs.some(
+              (a) =>
+                (a.city1 === selectedCity || a.city2 === selectedCity) &&
+                (a.city1 === dot.city || a.city2 === dot.city),
+            )
+          : false;
+        const dimmed = selectedCity && !isSelected && !isConnected;
+        return (
+          <circle
+            key={dot.city}
+            cx={dot.x}
+            cy={dot.y}
+            r={isSelected ? 5 : 2.5}
+            fill={isSelected ? '#facc15' : '#ef4444'}
+            opacity={dimmed ? 0.15 : 0.85}
+            style={{ cursor: 'pointer', transition: 'r 0.2s, opacity 0.2s' }}
+            onClick={() => setSelectedCity(selectedCity === dot.city ? null : dot.city)}
+          />
+        );
+      })}
     </svg>
   );
 };
