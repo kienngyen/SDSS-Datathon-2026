@@ -1,3 +1,39 @@
 .venv/
 */.virtual_documents/
 */.ipynb_checkpoints/
+node_modules/
+
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Documentation files
+documentation/files/VISUAL_GUIDE.txt
+documentation/files/README.md
+documentation/files/QUICK_REFERENCE_CARD.txt
+documentation/files/DATASET_WALKTHROUGH_SUMMARY.md
+documentation/files/DATASET_EXPLAINED_SIMPLE.md
+documentation/files/CHEAT_SHEET.md
+__pycache__
