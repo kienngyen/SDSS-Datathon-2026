@@ -1,4 +1,4 @@
-# CLAUDE.md — Airline Ticket Data Analysis
+# analysis execution.md — Airline Ticket Data Analysis
 
 ## Project Context
 - **Competition:** SDSS Datathon 2026
