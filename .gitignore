@@ -28,3 +28,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Documentation files
+documentation/files/VISUAL_GUIDE.txt
+documentation/files/README.md
+documentation/files/QUICK_REFERENCE_CARD.txt
+documentation/files/DATASET_WALKTHROUGH_SUMMARY.md
+documentation/files/DATASET_EXPLAINED_SIMPLE.md
+documentation/files/CHEAT_SHEET.md
