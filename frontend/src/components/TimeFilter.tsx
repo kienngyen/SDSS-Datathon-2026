@@ -1,152 +1,156 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
+
+const ALL_QUARTERS = [1, 2, 3, 4];
+
+const AVAILABLE_QUARTERS: Record<number, Set<number>> = {
+  2022: new Set([1, 2, 3, 4]),
+  2023: new Set([1, 2, 3, 4]),
+  2024: new Set([1, 2, 3, 4]),
+  2025: new Set([1, 2]),
+};
 
 interface TimeFilterProps {
   years: number[];
-  selectedYears: Set<number>;
-  selectedQuarters: Map<number, Set<number>>;
-  onToggleYear: (year: number) => void;
-  onToggleQuarter: (year: number, quarter: number) => void;
+  currentYear: number;
+  selectedQuarters: Set<number>;
+  onYearChange: (year: number) => void;
+  onToggleQuarter: (quarter: number) => void;
 }
-
-const QUARTER_MAP: Record<number, number[]> = {
-  2022: [1, 2, 3, 4],
-  2023: [1, 2, 3, 4],
-  2024: [1, 2, 3, 4],
-  2025: [1, 2],
-};
 
 const TimeFilter: React.FC<TimeFilterProps> = ({
   years,
-  selectedYears,
+  currentYear,
   selectedQuarters,
-  onToggleYear,
+  onYearChange,
   onToggleQuarter,
 }) => {
-  const [open, setOpen] = useState(false);
-  const [expandedYear, setExpandedYear] = useState<number | null>(null);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const handleYearClick = (year: number) => {
-    onToggleYear(year);
-    setExpandedYear(expandedYear === year ? null : year);
-  };
-
-  const handleExpandToggle = (e: React.MouseEvent, year: number) => {
-    e.stopPropagation();
-    setExpandedYear(expandedYear === year ? null : year);
-  };
-
-  const hasAnySelection = selectedYears.size > 0;
-
-  let label = 'Time';
-  if (hasAnySelection) {
-    const parts: string[] = [];
-    for (const y of Array.from(selectedYears).sort()) {
-      const qs = selectedQuarters.get(y);
-      if (qs && qs.size > 0) {
-        parts.push(`${y} ${Array.from(qs).sort().map((q) => `Q${q}`).join(',')}`);
-      } else {
-        parts.push(`${y}`);
-      }
-    }
-    label = parts.join(' | ');
-  }
+  const yearIdx = years.indexOf(currentYear);
+  const hasPrev = yearIdx > 0;
+  const hasNext = yearIdx < years.length - 1;
+  const available = AVAILABLE_QUARTERS[currentYear] || new Set([1, 2, 3, 4]);
 
   return (
-    <div ref={ref} className="relative inline-block">
-      <button
-        onClick={() => setOpen(!open)}
-        className={`px-4 py-2 rounded-lg border text-sm transition-colors flex items-center gap-2
-          ${hasAnySelection
-            ? 'bg-blue-600/20 border-blue-500 text-blue-300'
-            : 'bg-slate-800 border-slate-600 text-slate-200 hover:border-slate-400'
-          }`}
-      >
-        {label}
-        <svg
-          width="10" height="10" viewBox="0 0 10 10"
-          className={`transition-transform ${open ? 'rotate-180' : ''}`}
+    <div className="w-full flex flex-col items-center gap-1">
+      {/* Year label */}
+      <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600, letterSpacing: '0.1em' }}>
+        {currentYear}
+      </span>
+
+      {/* < *----*----*----* > all aligned on one row */}
+      <div className="flex items-start w-full" style={{ gap: '8px' }}>
+        {/* Prev arrow aligned to dot center */}
+        <button
+          onClick={() => hasPrev && onYearChange(years[yearIdx - 1])}
+          disabled={!hasPrev}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: '0',
+            margin: '0',
+            marginTop: '1px',
+            cursor: hasPrev ? 'pointer' : 'default',
+            color: hasPrev ? '#cbd5e1' : '#334155',
+            transition: 'color 0.2s',
+            flexShrink: 0,
+            lineHeight: 0,
+          }}
         >
-          <path d="M1 3 L5 7 L9 3" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        </svg>
-      </button>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <path d="M12 4 L6 10 L12 16" />
+          </svg>
+        </button>
 
-      {open && (
-        <div className="absolute top-full left-0 mt-1 bg-slate-800 border border-slate-600 rounded-lg
-                        shadow-xl z-50 min-w-[160px] overflow-hidden py-1">
-          {years.map((year) => {
-            const isYearSelected = selectedYears.has(year);
-            const quarters = QUARTER_MAP[year] || [1, 2, 3, 4];
-            const yearQuarters = selectedQuarters.get(year);
-
+        {/* Timeline dots + lines */}
+        <div className="flex-1 flex items-start">
+          {ALL_QUARTERS.map((q, i) => {
+            const hasData = available.has(q);
+            const isSelected = hasData && selectedQuarters.has(q);
             return (
-              <div key={year}>
-                <div className="flex items-center">
-                  <button
-                    onClick={() => handleYearClick(year)}
-                    className={`flex-1 text-left px-4 py-2 text-sm transition-colors
-                      ${isYearSelected
-                        ? 'bg-blue-600 text-white'
-                        : 'text-slate-300 hover:bg-slate-700'
-                      }`}
+              <React.Fragment key={q}>
+                <button
+                  onClick={() => hasData && onToggleQuarter(q)}
+                  className="relative group z-10"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: '0',
+                    margin: '0',
+                    cursor: hasData ? 'pointer' : 'default',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  {isSelected && (
+                    <div
+                      className="absolute animate-pulse"
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        backgroundColor: 'rgba(239, 68, 68, 0.25)',
+                        top: '-5px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                      }}
+                    />
+                  )}
+                  <div
+                    style={{
+                      width: '14px',
+                      height: '14px',
+                      borderRadius: '50%',
+                      border: '2px solid',
+                      borderColor: isSelected ? '#f87171' : hasData ? '#64748b' : '#2d3748',
+                      backgroundColor: isSelected ? '#ef4444' : '#0f172a',
+                      boxShadow: isSelected ? '0 0 10px rgba(239, 68, 68, 0.6)' : 'none',
+                      opacity: hasData ? 1 : 0.3,
+                      transition: 'all 0.2s',
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 500,
+                      marginTop: '4px',
+                      color: isSelected ? '#f87171' : hasData ? '#64748b' : '#2d3748',
+                      opacity: hasData ? 1 : 0.3,
+                      transition: 'color 0.2s',
+                    }}
                   >
-                    {year}
-                  </button>
-                  <button
-                    onClick={(e) => handleExpandToggle(e, year)}
-                    className={`px-3 py-2 text-sm transition-colors
-                      ${isYearSelected
-                        ? 'bg-blue-600 text-white hover:bg-blue-500'
-                        : 'text-slate-400 hover:bg-slate-700'
-                      }`}
-                  >
-                    {expandedYear === year ? (
-                      <svg width="8" height="8" viewBox="0 0 8 8">
-                        <path d="M1 5 L4 2 L7 5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                      </svg>
-                    ) : (
-                      <svg width="8" height="8" viewBox="0 0 8 8">
-                        <path d="M1 2 L4 5 L7 2" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-
-                {expandedYear === year && (
-                  <div className="bg-slate-900/50">
-                    {quarters.map((q) => {
-                      const isQSelected = yearQuarters?.has(q) ?? false;
-                      return (
-                        <button
-                          key={q}
-                          onClick={() => onToggleQuarter(year, q)}
-                          className={`w-full text-left pl-8 pr-4 py-1.5 text-sm transition-colors
-                            ${isQSelected
-                              ? 'bg-blue-500/30 text-blue-300'
-                              : 'text-slate-400 hover:bg-slate-700 hover:text-slate-200'
-                            }`}
-                        >
-                          Q{q}
-                        </button>
-                      );
-                    })}
-                  </div>
+                    Q{q}
+                  </span>
+                </button>
+                {i < ALL_QUARTERS.length - 1 && (
+                  <div style={{ flex: 1, height: '2px', backgroundColor: 'rgba(239, 68, 68, 0.5)', marginTop: '6px' }} />
                 )}
-              </div>
+              </React.Fragment>
             );
           })}
         </div>
-      )}
+
+        {/* Next arrow aligned to dot center */}
+        <button
+          onClick={() => hasNext && onYearChange(years[yearIdx + 1])}
+          disabled={!hasNext}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: '0',
+            margin: '0',
+            marginTop: '1px',
+            cursor: hasNext ? 'pointer' : 'default',
+            color: hasNext ? '#cbd5e1' : '#334155',
+            transition: 'color 0.2s',
+            flexShrink: 0,
+            lineHeight: 0,
+          }}
+        >
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <path d="M8 4 L14 10 L8 16" />
+          </svg>
+        </button>
+      </div>
     </div>
   );
 };

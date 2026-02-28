@@ -47,6 +47,8 @@ interface USMapProps {
 
 const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters }) => {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<{ city: string; x: number; y: number } | null>(null);
+  const containerRef = React.useRef<HTMLDivElement>(null);
   const geoData = topoFeatures as any;
 
   const width = 960;
@@ -129,7 +131,47 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters }) => {
     [flightArcs],
   );
 
+  const cityPopularity = useMemo(() => {
+    const pop = new Map<string, number>();
+    for (const r of filteredRoutes) {
+      pop.set(r.city1, (pop.get(r.city1) || 0) + r.passengers);
+      pop.set(r.city2, (pop.get(r.city2) || 0) + r.passengers);
+    }
+    return pop;
+  }, [filteredRoutes]);
+
+  const maxCityPax = useMemo(
+    () => Math.max(1, ...cityPopularity.values()),
+    [cityPopularity],
+  );
+
   return (
+    <div ref={containerRef} style={{ position: 'relative', width: '100%' }}>
+    {tooltip && (
+      <div
+        style={{
+          position: 'absolute',
+          left: tooltip.x,
+          top: tooltip.y,
+          transform: 'translate(-50%, -120%)',
+          background: 'rgba(15, 23, 42, 0.92)',
+          color: '#e2e8f0',
+          fontSize: '12px',
+          fontWeight: 500,
+          padding: '5px 12px',
+          borderRadius: '8px',
+          border: '1px solid rgba(148, 163, 184, 0.2)',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+          backdropFilter: 'blur(8px)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+          transition: 'opacity 0.15s ease',
+          zIndex: 10,
+        }}
+      >
+        {tooltip.city}
+      </div>
+    )}
     <svg
       viewBox={`0 0 ${width} ${height}`}
       className="w-full h-auto"
@@ -188,20 +230,35 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters }) => {
             )
           : false;
         const dimmed = selectedCity && !isSelected && !isConnected;
+        const pax = cityPopularity.get(dot.city) || 0;
+        const t = Math.pow(pax / maxCityPax, 0.4);
+        const baseR = 2 + t * 4;
         return (
           <circle
             key={dot.city}
             cx={dot.x}
             cy={dot.y}
-            r={isSelected ? 5 : 2.5}
+            r={isSelected ? baseR + 2 : baseR}
             fill={isSelected ? '#facc15' : '#ef4444'}
             opacity={dimmed ? 0.15 : 0.85}
             style={{ cursor: 'pointer', transition: 'r 0.2s, opacity 0.2s' }}
             onClick={() => setSelectedCity(selectedCity === dot.city ? null : dot.city)}
+            onMouseEnter={(e) => {
+              const rect = containerRef.current?.getBoundingClientRect();
+              if (!rect) return;
+              setTooltip({ city: dot.city, x: e.clientX - rect.left, y: e.clientY - rect.top });
+            }}
+            onMouseMove={(e) => {
+              const rect = containerRef.current?.getBoundingClientRect();
+              if (!rect) return;
+              setTooltip({ city: dot.city, x: e.clientX - rect.left, y: e.clientY - rect.top });
+            }}
+            onMouseLeave={() => setTooltip(null)}
           />
         );
       })}
     </svg>
+    </div>
   );
 };
 
