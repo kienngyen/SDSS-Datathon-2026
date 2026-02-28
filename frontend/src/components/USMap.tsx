@@ -38,7 +38,7 @@ const filteredTopo = {
 };
 
 const topoFeatures = feature(filteredTopo as any, filteredTopo.objects.states);
-const outerBoundary = mesh(filteredTopo as any, filteredTopo.objects.states, (a, b) => a === b);
+const outerBoundary = mesh(filteredTopo as any, filteredTopo.objects.states, (a: any, b: any) => a === b);
 
 interface USMapProps {
   selectedYears: Set<number>;
