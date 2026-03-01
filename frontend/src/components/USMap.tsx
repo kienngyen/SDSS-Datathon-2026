@@ -35,6 +35,13 @@ interface RouteRecord {
 
 const EXCLUDED_FIPS = new Set(['02']);
 
+// Fare tier colours from design (no opacity)
+const FARE_COLORS = {
+  cheap: '#32E794',   // Under $200
+  mid: '#F9D131',     // $200–$399
+  expensive: '#EB544A', // $400+
+} as const;
+
 const simplified = simplify(presimplify(topoData as any), 0.08);
 
 const filteredTopo = {
@@ -343,7 +350,7 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
               if (!visibleFares[fareTier]) return null;
               const t = arc.passengers / maxPax;
               const intensity = Math.pow(t, 0.5);
-              const fareColor = fareTier === 'cheap' ? '#4ade80' : fareTier === 'mid' ? '#facc15' : '#ef4444';
+              const fareColor = FARE_COLORS[fareTier];
               const isSelectedRoute = selectedRoute && (
                 (arc.city1 === selectedRoute.city1 && arc.city2 === selectedRoute.city2) ||
                 (arc.city1 === selectedRoute.city2 && arc.city2 === selectedRoute.city1)
@@ -353,14 +360,16 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
                   ? (isSelectedRoute ? 1 : 0.25) * (0.15 + intensity * 0.75)
                   : 0.15 + intensity * 0.75
                 : 0.02 + intensity * 0.5;
+              const baseStrokeWidth = selectedCity ? 0.3 + intensity * 5 : 0.15 + intensity * 6;
+              const strokeWidth = baseStrokeWidth + (isSelectedRoute ? 2 : 0);
               return (
                 <path
                   key={arc.key}
                   d={arc.d}
                   fill="none"
                   stroke={fareColor}
-                  strokeWidth={selectedCity ? 0.3 + intensity * 5 : 0.15 + intensity * 6}
-                  opacity={pathOpacity}
+                  strokeWidth={strokeWidth}
+                  opacity={isSelectedRoute ? 1 : pathOpacity}
                   strokeLinecap="round"
                   pointerEvents="none"
                   style={{ transition: 'opacity 0.3s ease' }}
@@ -387,8 +396,10 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
                 cx={dot.x}
                 cy={dot.y}
                 r={isSelected ? baseR + 2 : baseR}
-                fill={isSelected ? '#facc15' : '#ef4444'}
-                opacity={dimmed ? 0.15 : 0.85}
+                fill={isSelected ? '#FFFFFF' : '#E0E0E0'}
+                stroke={isSelected ? 'rgba(255, 255, 255, 0.6)' : 'none'}
+                strokeWidth={isSelected ? 2 : 0}
+                opacity={isSelected ? 1 : (dimmed ? 0.15 : 0.8)}
                 style={{ cursor: 'pointer', transition: 'r 0.2s, opacity 0.2s' }}
                 onClick={() => {
                   if (selectedCity && selectedCity !== dot.city && isConnected) {
@@ -436,9 +447,9 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
         }}
       >
         {([
-          { key: 'cheap' as const, color: '#4ade80', label: 'Under $200' },
-          { key: 'mid' as const, color: '#facc15', label: '$200–$399' },
-          { key: 'expensive' as const, color: '#ef4444', label: '$400+' },
+          { key: 'cheap' as const, color: FARE_COLORS.cheap, label: 'Under $200' },
+          { key: 'mid' as const, color: FARE_COLORS.mid, label: '$200–$399' },
+          { key: 'expensive' as const, color: FARE_COLORS.expensive, label: '$400+' },
         ]).map((item) => (
           <div
             key={item.key}
