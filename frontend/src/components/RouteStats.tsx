@@ -107,8 +107,8 @@ function CarrierColumn({ code, fare, ms, label }: { code: string; fare: number; 
           />
         )}
       </div>
-      <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
-        carrier_low: <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{code}</span>
+      <div style={{ fontSize: '11px', color: '#e2e8f0', fontWeight: 600, marginTop: '2px' }}>
+        {code}
       </div>
       <div style={{ fontSize: '11px', color: '#e2e8f0', fontWeight: 500, textAlign: 'center' }}>{info.name}</div>
       <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px' }}>avg fare</div>
