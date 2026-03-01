@@ -58,22 +58,30 @@ interface USMapProps {
   selectedQuarters: Map<number, Set<number>>;
   displayYear: number;
   displayQuarter: number;
+  visibleFares: { cheap: boolean; mid: boolean; expensive: boolean };
+  onToggleFare: (key: 'cheap' | 'mid' | 'expensive') => void;
 }
 
-const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayYear, displayQuarter }) => {
+const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayYear, displayQuarter, visibleFares, onToggleFare }) => {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [selectedRoute, setSelectedRoute] = useState<{ city1: string; city2: string } | null>(null);
+  const [showingRoute, setShowingRoute] = useState(false);
   const [tooltip, setTooltip] = useState<{ city: string; x: number; y: number } | null>(null);
   const [contentOpacity, setContentOpacity] = useState(1);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const mapWrapperRef = React.useRef<HTMLDivElement>(null);
   const geoData = topoFeatures as any;
 
   const [displayedCity, setDisplayedCity] = useState<string | null>(null);
 
+  const [displayedShowingRoute, setDisplayedShowingRoute] = useState(false);
+
   useEffect(() => {
     if (!selectedCity) {
-      // Delay clearing so the slide-out animation plays first
       const t = setTimeout(() => {
         setDisplayedCity(null);
+        setShowingRoute(false);
+        setDisplayedShowingRoute(false);
       }, 800);
       setContentOpacity(1);
       return () => clearTimeout(t);
@@ -87,6 +95,17 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
       return () => clearTimeout(t);
     }
   }, [selectedCity, displayedCity]);
+
+  useEffect(() => {
+    if (showingRoute !== displayedShowingRoute) {
+      setContentOpacity(0);
+      const t = setTimeout(() => {
+        setDisplayedShowingRoute(showingRoute);
+        setContentOpacity(1);
+      }, 300);
+      return () => clearTimeout(t);
+    }
+  }, [showingRoute, displayedShowingRoute]);
 
   const width = 960;
   const height = 600;
@@ -120,14 +139,15 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
       });
     }
 
-    const grouped = new Map<string, { city1: string; city2: string; passengers: number }>();
+    const grouped = new Map<string, { city1: string; city2: string; passengers: number; fareSum: number }>();
     for (const r of data) {
       const key = `${r.city1}-${r.city2}`;
       const existing = grouped.get(key);
       if (existing) {
         existing.passengers += r.passengers;
+        existing.fareSum += r.fare * r.passengers;
       } else {
-        grouped.set(key, { city1: r.city1, city2: r.city2, passengers: r.passengers });
+        grouped.set(key, { city1: r.city1, city2: r.city2, passengers: r.passengers, fareSum: r.fare * r.passengers });
       }
     }
     return Array.from(grouped.values());
@@ -152,15 +172,17 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
         const midX = (s[0] + e[0]) / 2 - dy * 0.15;
         const midY = (s[1] + e[1]) / 2 + dx * 0.15;
 
+        const avgFare = r.passengers > 0 ? r.fareSum / r.passengers : 0;
         return {
           key: `${r.city1}-${r.city2}`,
           city1: r.city1,
           city2: r.city2,
           d: `M${s[0]},${s[1]} Q${midX},${midY} ${e[0]},${e[1]}`,
           passengers: r.passengers,
+          fare: avgFare,
         };
       })
-      .filter(Boolean) as { key: string; city1: string; city2: string; d: string; passengers: number }[];
+      .filter(Boolean) as { key: string; city1: string; city2: string; d: string; passengers: number; fare: number }[];
   }, [projection, filteredRoutes]);
 
   const maxPax = useMemo(
@@ -225,10 +247,34 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
     };
   }, [displayedCity, selectedYears, selectedQuarters]);
 
+  const routeDetails = useMemo(() => {
+    if (!selectedRoute) return null;
+    let data = routesData as RouteRecord[];
+    const hasSelection = selectedYears.size > 0;
+    if (hasSelection) {
+      data = data.filter((r) => {
+        if (!selectedYears.has(r.year)) return false;
+        const qs = selectedQuarters.get(r.year);
+        if (qs && qs.size > 0) return qs.has(r.quarter);
+        return true;
+      });
+    }
+    return data.find(
+      (r) =>
+        (r.city1 === selectedRoute.city1 && r.city2 === selectedRoute.city2) ||
+        (r.city1 === selectedRoute.city2 && r.city2 === selectedRoute.city1),
+    ) || null;
+  }, [selectedRoute, selectedYears, selectedQuarters]);
+
+  const lastRouteRef = React.useRef<RouteRecord | null>(null);
+  if (routeDetails) lastRouteRef.current = routeDetails;
+  const displayRoute = routeDetails || lastRouteRef.current;
+
   return (
     <div ref={containerRef} style={{ position: 'relative', overflow: 'visible' }}>
       {/* Map wrapper — slides left without shrinking, above the panel */}
       <div
+        ref={mapWrapperRef}
         style={{
           position: 'relative',
           zIndex: 2,
@@ -293,14 +339,17 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
             {flightArcs.map((arc) => {
               const connected = !selectedCity || arc.city1 === selectedCity || arc.city2 === selectedCity;
               if (!connected) return null;
+              const fareTier = arc.fare < 200 ? 'cheap' : arc.fare < 400 ? 'mid' : 'expensive';
+              if (!visibleFares[fareTier]) return null;
               const t = arc.passengers / maxPax;
               const intensity = Math.pow(t, 0.5);
+              const fareColor = fareTier === 'cheap' ? '#4ade80' : fareTier === 'mid' ? '#facc15' : '#ef4444';
               return (
                 <path
                   key={arc.key}
                   d={arc.d}
                   fill="none"
-                  stroke={selectedCity ? '#60a5fa' : '#3b82f6'}
+                  stroke={fareColor}
                   strokeWidth={selectedCity ? 0.3 + intensity * 5 : 0.15 + intensity * 6}
                   opacity={selectedCity ? 0.15 + intensity * 0.75 : 0.02 + intensity * 0.5}
                   strokeLinecap="round"
@@ -331,14 +380,31 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
                 fill={isSelected ? '#facc15' : '#ef4444'}
                 opacity={dimmed ? 0.15 : 0.85}
                 style={{ cursor: 'pointer', transition: 'r 0.2s, opacity 0.2s' }}
-                onClick={() => setSelectedCity(selectedCity === dot.city ? null : dot.city)}
+                onClick={() => {
+                  if (selectedCity && selectedCity !== dot.city && isConnected) {
+                    setSelectedRoute({ city1: selectedCity, city2: dot.city });
+                    setShowingRoute(true);
+                  } else if (selectedCity === dot.city) {
+                    if (showingRoute) {
+                      setSelectedRoute(null);
+                      setShowingRoute(false);
+                    } else {
+                      setSelectedCity(null);
+                      setSelectedRoute(null);
+                    }
+                  } else {
+                    setSelectedCity(dot.city);
+                    setSelectedRoute(null);
+                    setShowingRoute(false);
+                  }
+                }}
                 onMouseEnter={(e) => {
-                  const rect = containerRef.current?.getBoundingClientRect();
+                  const rect = mapWrapperRef.current?.getBoundingClientRect();
                   if (!rect) return;
                   setTooltip({ city: dot.city, x: e.clientX - rect.left, y: e.clientY - rect.top });
                 }}
                 onMouseMove={(e) => {
-                  const rect = containerRef.current?.getBoundingClientRect();
+                  const rect = mapWrapperRef.current?.getBoundingClientRect();
                   if (!rect) return;
                   setTooltip({ city: dot.city, x: e.clientX - rect.left, y: e.clientY - rect.top });
                 }}
@@ -349,16 +415,58 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
         </svg>
       </div>
 
+      {/* Fare toggles — bottom left, circles aligned with Q1 below */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          marginTop: '8px',
+          paddingLeft: '22px',
+        }}
+      >
+        {([
+          { key: 'cheap' as const, color: '#4ade80', label: 'Under $200' },
+          { key: 'mid' as const, color: '#facc15', label: '$200–$399' },
+          { key: 'expensive' as const, color: '#ef4444', label: '$400+' },
+        ]).map((item) => (
+          <div
+            key={item.key}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+            onClick={() => onToggleFare(item.key)}
+          >
+            <div
+              style={{
+                width: '14px',
+                height: '14px',
+                borderRadius: '50%',
+                backgroundColor: visibleFares[item.key] ? item.color : 'transparent',
+                border: `2px solid ${item.color}`,
+                transition: 'background-color 0.2s',
+                flexShrink: 0,
+              }}
+            />
+            <span style={{
+              fontSize: '11px',
+              color: visibleFares[item.key] ? '#cbd5e1' : '#475569',
+              transition: 'color 0.2s',
+            }}>
+              {item.label}
+            </span>
+          </div>
+        ))}
+      </div>
+
       {/* Info panel — always mounted, slides from behind the map */}
       <div
         style={{
           position: 'absolute',
           right: '0',
           top: '50%',
-          width: '260px',
+          width: displayedShowingRoute ? '340px' : '260px',
           zIndex: 1,
           transform: selectedCity
-            ? 'translateY(-50%) translateX(calc(100% - 30px))'
+            ? 'translateY(-50%) translateX(calc(100% - 100px))'
             : 'translateY(-50%) translateX(0)',
           opacity: selectedCity ? 1 : 0,
           pointerEvents: selectedCity ? 'auto' : 'none',
@@ -367,7 +475,7 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
             : 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
         }}
       >
-        {displayedCity && cityStats && (
+        {displayedCity && (
           <div
             style={{
               background: 'rgba(15, 23, 42, 0.9)',
@@ -385,7 +493,7 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
                 Q{displayQuarter} {displayYear}
               </span>
               <button
-                onClick={() => setSelectedCity(null)}
+                onClick={() => { setSelectedCity(null); setSelectedRoute(null); }}
                 style={{
                   background: 'none', border: 'none', color: '#64748b', cursor: 'pointer',
                   fontSize: '18px', lineHeight: 1, padding: '2px 6px',
@@ -394,17 +502,54 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
                 &times;
               </button>
             </div>
-            <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 16px 0', lineHeight: 1.3 }}>
-              {displayedCity}
-            </h3>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <StatRow label="Flight Connections" value={cityStats.connections.toLocaleString()} />
-              <StatRow label="Total Passengers" value={cityStats.totalPassengers.toLocaleString()} />
-              <StatRow label="Total Fared Pax" value={Math.round(cityStats.avgFaredPax).toLocaleString()} />
-              <StatRow label="% Low-Fare Markets" value={`${(cityStats.avgPerLFMkts * 100).toFixed(1)}%`} />
-              <StatRow label="% Premium" value={`${(cityStats.avgPerPrem * 100).toFixed(1)}%`} />
-            </div>
+            {displayedShowingRoute && displayRoute ? (
+              <>
+                <h3 style={{ fontSize: '13px', fontWeight: 600, margin: '0 0 4px 0', lineHeight: 1.3 }}>
+                  {displayRoute.city1}
+                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#3b82f6" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M10 4 L10 16 M6 12 L10 16 L14 12" />
+                  </svg>
+                  <span style={{ fontSize: '12px', color: '#3b82f6', fontWeight: 500 }}>{displayRoute.nsmiles.toLocaleString()} miles</span>
+                </div>
+                <h3 style={{ fontSize: '13px', fontWeight: 600, margin: '0 0 14px 0', lineHeight: 1.3 }}>
+                  {displayRoute.city2}
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 20px' }}>
+                  <StatRow label="Passengers" value={displayRoute.passengers.toLocaleString()} />
+                  <StatRow label="Avg Fare" value={`$${displayRoute.fare.toFixed(2)}`} />
+                </div>
+                <div style={{ height: '1px', background: 'rgba(148,163,184,0.15)', margin: '14px 0' }} />
+                <div style={{ display: 'flex', gap: '0' }}>
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px', paddingRight: '16px' }}>
+                    <StatRow label="Largest Carrier" value={displayRoute.carrier_lg} />
+                    <StatRow label="Largest MS" value={`${(displayRoute.large_ms * 100).toFixed(1)}%`} />
+                    <StatRow label="Largest Fare" value={`$${displayRoute.fare_lg.toFixed(2)}`} />
+                  </div>
+                  <div style={{ width: '1px', background: 'rgba(148,163,184,0.15)' }} />
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px', paddingLeft: '16px' }}>
+                    <StatRow label="Low-Fare Carrier" value={displayRoute.carrier_low} />
+                    <StatRow label="Low-Fare MS" value={`${(displayRoute.lf_ms * 100).toFixed(1)}%`} />
+                    <StatRow label="Low-Fare Price" value={`$${displayRoute.fare_low.toFixed(2)}`} />
+                  </div>
+                </div>
+              </>
+            ) : cityStats ? (
+              <>
+                <h3 style={{ fontSize: '15px', fontWeight: 600, margin: '0 0 16px 0', lineHeight: 1.3 }}>
+                  {displayedCity}
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <StatRow label="Flight Connections" value={cityStats.connections.toLocaleString()} />
+                  <StatRow label="Total Passengers" value={cityStats.totalPassengers.toLocaleString()} />
+                  <StatRow label="Total Fared Pax" value={Math.round(cityStats.avgFaredPax).toLocaleString()} />
+                  <StatRow label="% Low-Fare Markets" value={`${(cityStats.avgPerLFMkts * 100).toFixed(1)}%`} />
+                  <StatRow label="% Premium" value={`${(cityStats.avgPerPrem * 100).toFixed(1)}%`} />
+                </div>
+              </>
+            ) : null}
           </div>
         )}
       </div>

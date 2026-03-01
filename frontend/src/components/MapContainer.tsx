@@ -35,6 +35,7 @@ const MapContainer: React.FC = () => {
   const [selectedQuarter, setSelectedQuarter] = useState<number>(1);
   const [lockedYear, setLockedYear] = useState<number>(2022);
   const [simulating, setSimulating] = useState(false);
+  const [visibleFares, setVisibleFares] = useState({ cheap: true, mid: true, expensive: true });
   const simRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const selectedQuarters = new Set(
@@ -91,7 +92,7 @@ const MapContainer: React.FC = () => {
 
   return (
     <div className="relative mx-auto" style={{ width: '100%', maxWidth: '800px' }}>
-      <USMap selectedYears={mapYears} selectedQuarters={mapQuarters} displayYear={lockedYear} displayQuarter={selectedQuarter} />
+      <USMap selectedYears={mapYears} selectedQuarters={mapQuarters} displayYear={lockedYear} displayQuarter={selectedQuarter} visibleFares={visibleFares} onToggleFare={(key) => setVisibleFares((prev) => ({ ...prev, [key]: !prev[key] }))} />
       <div className="mt-3">
         <TimeFilter
           years={YEARS}
