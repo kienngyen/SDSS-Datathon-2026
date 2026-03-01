@@ -1,6 +1,7 @@
 import './App.css'
 import MapContainer from './components/MapContainer'
 import { RouteStats } from './components/RouteStats'
+import { SeasonalTrends } from './components/SeasonalTrends'
 
 function App() {
   return (
@@ -108,6 +109,10 @@ function App() {
           </p>
           <MapContainer />
         </div>
+      </div>
+      {/* Seasonal Trends section */}
+      <div className="snap-section" style={{ overflow: 'hidden' }}>
+        <SeasonalTrends />
       </div>
       {/* Market Dashboard section */}
       <div className="snap-section" style={{ overflow: 'hidden' }}>
