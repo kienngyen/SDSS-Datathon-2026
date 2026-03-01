@@ -31,9 +31,9 @@ function buildSteps(startYear: number, startQuarter: number | null) {
 }
 
 const MapContainer: React.FC = () => {
-  const [currentYear, setCurrentYear] = useState(2025);
-  const [selectedQuarter, setSelectedQuarter] = useState<number | null>(null);
-  const [lockedYear, setLockedYear] = useState<number | null>(null);
+  const [currentYear, setCurrentYear] = useState(2022);
+  const [selectedQuarter, setSelectedQuarter] = useState<number>(1);
+  const [lockedYear, setLockedYear] = useState<number>(2022);
   const [simulating, setSimulating] = useState(false);
   const simRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -46,18 +46,9 @@ const MapContainer: React.FC = () => {
   }, []);
 
   const handleToggleQuarter = useCallback((quarter: number) => {
-    setSelectedQuarter((prev) => {
-      if (prev === quarter) {
-        setLockedYear(null);
-        return null;
-      }
-      return quarter;
-    });
-    setLockedYear((prev) => {
-      if (selectedQuarter === quarter) return null;
-      return currentYear;
-    });
-  }, [currentYear, selectedQuarter]);
+    setSelectedQuarter(quarter);
+    setLockedYear(currentYear);
+  }, [currentYear]);
 
   const startSimulation = useCallback(() => {
     const steps = buildSteps(lockedYear || currentYear, selectedQuarter);
@@ -94,15 +85,13 @@ const MapContainer: React.FC = () => {
     };
   }, []);
 
-  const hasSelection = selectedQuarter !== null && lockedYear !== null;
-  const mapYears = hasSelection ? new Set([lockedYear]) : new Set<number>();
-  const mapQuarters = hasSelection
-    ? new Map([[lockedYear, new Set([selectedQuarter])]])
-    : new Map<number, Set<number>>();
+  const mapYears = new Set([lockedYear]);
+  const mapQuarters = new Map([[lockedYear, new Set([selectedQuarter])]]);
+
 
   return (
     <div className="relative mx-auto" style={{ width: '100%', maxWidth: '800px' }}>
-      <USMap selectedYears={mapYears} selectedQuarters={mapQuarters} />
+      <USMap selectedYears={mapYears} selectedQuarters={mapQuarters} displayYear={lockedYear} displayQuarter={selectedQuarter} />
       <div className="mt-3">
         <TimeFilter
           years={YEARS}
@@ -113,31 +102,24 @@ const MapContainer: React.FC = () => {
         />
       </div>
       <div className="mt-3 flex justify-center">
-        {(() => {
-          const canRun = simulating || selectedQuarter !== null;
-          return (
-            <button
-              onClick={simulating ? stopSimulation : canRun ? startSimulation : undefined}
-              disabled={!canRun}
-              style={{
-                background: 'none',
-                border: '1px solid',
-                borderColor: simulating ? '#f87171' : canRun ? '#64748b' : '#1e293b',
-                borderRadius: '6px',
-                padding: '6px 20px',
-                color: simulating ? '#f87171' : canRun ? '#cbd5e1' : '#334155',
-                fontSize: '13px',
-                fontWeight: 500,
-                letterSpacing: '0.05em',
-                cursor: canRun ? 'pointer' : 'default',
-                opacity: canRun ? 1 : 0.4,
-                transition: 'all 0.2s',
-              }}
-            >
-              {simulating ? 'Stop Simulation' : 'Run Simulation'}
-            </button>
-          );
-        })()}
+        <button
+          onClick={simulating ? stopSimulation : startSimulation}
+          style={{
+            background: 'none',
+            border: '1px solid',
+            borderColor: simulating ? '#f87171' : '#64748b',
+            borderRadius: '6px',
+            padding: '6px 20px',
+            color: simulating ? '#f87171' : '#cbd5e1',
+            fontSize: '13px',
+            fontWeight: 500,
+            letterSpacing: '0.05em',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}
+        >
+          {simulating ? 'Stop Simulation' : 'Run Simulation'}
+        </button>
       </div>
     </div>
   );
