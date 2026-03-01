@@ -344,6 +344,15 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
               const t = arc.passengers / maxPax;
               const intensity = Math.pow(t, 0.5);
               const fareColor = fareTier === 'cheap' ? '#4ade80' : fareTier === 'mid' ? '#facc15' : '#ef4444';
+              const isSelectedRoute = selectedRoute && (
+                (arc.city1 === selectedRoute.city1 && arc.city2 === selectedRoute.city2) ||
+                (arc.city1 === selectedRoute.city2 && arc.city2 === selectedRoute.city1)
+              );
+              const pathOpacity = selectedCity
+                ? selectedRoute
+                  ? (isSelectedRoute ? 1 : 0.25) * (0.15 + intensity * 0.75)
+                  : 0.15 + intensity * 0.75
+                : 0.02 + intensity * 0.5;
               return (
                 <path
                   key={arc.key}
@@ -351,9 +360,10 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
                   fill="none"
                   stroke={fareColor}
                   strokeWidth={selectedCity ? 0.3 + intensity * 5 : 0.15 + intensity * 6}
-                  opacity={selectedCity ? 0.15 + intensity * 0.75 : 0.02 + intensity * 0.5}
+                  opacity={pathOpacity}
                   strokeLinecap="round"
                   pointerEvents="none"
+                  style={{ transition: 'opacity 0.3s ease' }}
                 />
               );
             })}
@@ -526,7 +536,7 @@ const USMap: React.FC<USMapProps> = ({ selectedYears, selectedQuarters, displayY
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px', paddingRight: '16px' }}>
                     <StatRow label="Largest Carrier" value={displayRoute.carrier_lg} />
                     <StatRow label="Largest MS" value={`${(displayRoute.large_ms * 100).toFixed(1)}%`} />
-                    <StatRow label="Largest Fare" value={`$${displayRoute.fare_lg.toFixed(2)}`} />
+                    <StatRow label="Largest-Fare Price" value={`$${displayRoute.fare_lg.toFixed(2)}`} />
                   </div>
                   <div style={{ width: '1px', background: 'rgba(148,163,184,0.15)' }} />
                   <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '14px', paddingLeft: '16px' }}>
