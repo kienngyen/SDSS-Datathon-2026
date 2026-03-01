@@ -1,0 +1,16 @@
+{
+  "AA": { "name": "American Airlines",    "color": "#0078D2", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/aa.com" },
+  "AS": { "name": "Alaska Airlines",      "color": "#00467F", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/alaskaair.com" },
+  "B6": { "name": "JetBlue Airways",      "color": "#003876", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/jetblue.com" },
+  "DL": { "name": "Delta Air Lines",      "color": "#E01933", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/delta.com" },
+  "F9": { "name": "Frontier Airlines",    "color": "#006241", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/flyfrontier.com" },
+  "G4": { "name": "Allegiant Air",        "color": "#FFC20E", "textColor": "#000000", "logoUrl": "https://logo.clearbit.com/allegiantair.com" },
+  "HA": { "name": "Hawaiian Airlines",    "color": "#4B0082", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/hawaiianairlines.com" },
+  "MX": { "name": "Breeze Airways",       "color": "#00B4D8", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/flybreeze.com" },
+  "NK": { "name": "Spirit Airlines",      "color": "#FFD700", "textColor": "#000000", "logoUrl": "https://logo.clearbit.com/spirit.com" },
+  "SY": { "name": "Sun Country Airlines", "color": "#D62728", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/suncountry.com" },
+  "UA": { "name": "United Airlines",      "color": "#005DAA", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/united.com" },
+  "WN": { "name": "Southwest Airlines",   "color": "#F37021", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/southwest.com" },
+  "XP": { "name": "Avelo Airlines",       "color": "#2E8B57", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/aveloair.com" },
+  "3M": { "name": "Silver Airways",       "color": "#607D8B", "textColor": "#ffffff", "logoUrl": "https://logo.clearbit.com/silverairways.com" }
+}

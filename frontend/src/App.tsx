@@ -1,5 +1,6 @@
 import './App.css'
 import MapContainer from './components/MapContainer'
+import { RouteStats } from './components/RouteStats'
 
 function App() {
   return (
@@ -79,7 +80,7 @@ function App() {
       </div>
 
       {/* Map section */}
-      <div className="snap-section" style={{ overflow: 'hidden' }}>
+      <div className="snap-section" style={{ overflow: 'hidden' }} id="map-section">
         <div
           style={{
             width: '100%',
@@ -107,6 +108,10 @@ function App() {
           </p>
           <MapContainer />
         </div>
+      </div>
+      {/* Market Dashboard section */}
+      <div className="snap-section" style={{ overflow: 'hidden' }}>
+        <RouteStats />
       </div>
     </div>
   )
